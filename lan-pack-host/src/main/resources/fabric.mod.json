@@ -1,0 +1,16 @@
+{
+	"schemaVersion": 1,
+	"id": "lanpackhost",
+	"version": "${version}",
+	"name": "LAN Pack Host",
+	"description": "Starts AutoModpack when a single-player world is opened to LAN.",
+	"authors": ["Kutz4you"],
+	"license": "MIT",
+	"environment": "client",
+	"mixins": ["lanpackhost.mixins.json"],
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "26.3",
+		"automodpack": "*"
+	}
+}

@@ -1,0 +1,9 @@
+{
+	"required": true,
+	"package": "com.kutz.lanpack",
+	"compatibilityLevel": "JAVA_21",
+	"client": ["IntegratedServerMixin", "MinecraftMixin"],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

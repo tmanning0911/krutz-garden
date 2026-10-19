@@ -1,0 +1,39 @@
+# dependencies
+node_modules/
+**/node_modules/
+
+# large friend-pack / mod archives
+airdrop-fabric/
+airdrop-fabric.zip
+airdrop-mods/
+airdrop-mods.zip
+*.jar
+
+# local world dumps and heavy binaries
+*.mca
+*.png
+*.log
+logs/
+
+# gradle / build output
+.gradle/
+**/build/
+**/out/
+
+# env / secrets
+.env
+.env.*
+*.pem
+id_*
+*.key
+**/credentials/
+**/provisioning-secret
+automodpack/credentials/
+
+# leave the SSH helper local (do not ship)
+install-mod-and-ssh.command
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

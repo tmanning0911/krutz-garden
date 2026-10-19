@@ -1,0 +1,5 @@
+Put automodpack-for-friend.jar in this folder:
+
+~/Library/Application Support/minecraft/mods/
+
+Use the Fabric 26.3 profile. Then join 192.168.1.28:25565 after Taylor opens the world.
