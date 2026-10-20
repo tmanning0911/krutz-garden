@@ -71,7 +71,7 @@ Camera: `globalThis.__view = { camera, controls }` after the viewer loads.
 
 ## Ambition build (this session)
 
-Schematic expanded to **122×44×143** (`localX = worldX + 634`, `localY = worldY - 44`, `localZ = worldZ - 348`).
+Schematic expanded to **122×47×143** (`localX = worldX + 634`, `localY = worldY - 44`, `localZ = worldZ - 348`).
 
 Memorable features shipped:
 - Central fountain court on the main path (~-560,420) with sea-lantern basin glow
@@ -91,5 +91,12 @@ Memorable features shipped:
 - Healed floating exterior skirts; moon gate; firefly glade; SE amphitheatre
 - Expanded greenhouse; fountain end-rod jet; wall-walk parapet
 - Zen stepping stones; icehouse cellar; lantern festival posts; NE chapel ruin
+- Tea pavilion; iris canal; compost yard; archery butts; willow walk; clock-tower folly
+- Stone library; lavender walk; rain cistern; potting shed; wall merlons
+- Market stalls; stepping brook; herb wheel; observatory pad; cart track; scarecrows
+- Undercroft fill; rose-arch walk; beehive expansion; quarry overlook
+- Zen gravel court; hop trellis; camp kitchen; map gazebo; moss steps
+- Statue court; reed marsh; drying racks; drain swales; toll booth
+- Wine cellar; topiary; millstone ruin; wildflower N strip; battery vents
 
 Coverage target unchanged: ~104 lattice stations, uncovered farmland = 0.
