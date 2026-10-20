@@ -104,4 +104,9 @@ Memorable features shipped:
 
 - East orchard nursery + shed; candle labyrinth; boat house loft
 - Herb drying loft; SE lighthouse; fairy mushroom rings; fountain mosaic
+- Bocce court; potager diamonds; amphora plaza; reed beds; cable markers
+- Shepherd hut + sheep paddock; fire circle; memorial oak; east service gate
+- Laundry yard; root cellar; bird bath; maze plinth; fountain rim lanterns
+- Rain garden swale; espalier apple; gatehouse bell; wall seat niches
+- Path cobble mix; wall ivy; house-front planters; solar apron
 Coverage target unchanged: ~104 lattice stations, uncovered farmland = 0.
