@@ -80,5 +80,10 @@ Memorable features shipped:
 - House-front carriage loop, pantry wing stub, west dock + bridge
 - Formal English garden room, orchard + well, rose parterre, vineyard trellis
 - Night lantern ring on walls/towers; path posts; gate banners
+- Formal hedge maze (SW beds) with center plinth
+- Reflecting pool court + spruce bridge (SE of fountain)
+- Herb spiral near house, sundial garden, NW lookout tower
+- Buried pantry/sorting stub under east approach
+- Softened NW/W exterior skirts
 
 Coverage target unchanged: ~104 lattice stations, uncovered farmland = 0.
