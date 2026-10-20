@@ -8,8 +8,8 @@ Keep styling `krutz-solar-house.schem` so the English stone-walled acre in front
 
 ## Mapping
 
-- Schematic: `krutz-solar-house.schem` (118×23×139)
-- World → local: `localX = worldX + 630`, `localY = worldY - 58`, `localZ = worldZ - 352`
+- Schematic: `krutz-solar-house.schem` (118×41×139, expanded depth+height)
+- World → local: `localX = worldX + 630`, `localY = worldY - 44`, `localZ = worldZ - 352` (ORIGIN_Y shifted after underground expand)
 - House (do not destroy): `wx <= -592`, `wz 410–430`, roof panels/stations at y≈77, water at x=-620..-618
 - Solar hill (do not flatten): `wx >= -526`, `wz 446–464`
 - Garden walls: x=-590 / x=-528 / z=368 / z=474; east gate z=420–421
@@ -68,3 +68,17 @@ Camera: `globalThis.__view = { camera, controls }` after the viewer loads.
 - Do not SSH anywhere, do not install Ice and Fire, do not reinstall craftmatic (loses custom writer if present; this cloud install is fresh npm so use stock write.js).
 - Do not set gamerule doMobSpawning false.
 - Do not claim live drones work; this is the model only.
+
+## Ambition build (this session)
+
+Schematic expanded to **118×41×139** (`localY = worldY - 44`).
+
+Memorable features shipped:
+- Central fountain court on the main path (~-560,420) with sea-lantern basin glow
+- East-gate visitor pavilion + glass greenhouse + flagstone apron
+- Hillside solar farm (radiant/moonlit/daylight panels) + buried battery hall + bone-farm stub + chimney/campfire
+- House-front carriage loop, pantry wing stub, west dock + bridge
+- Formal English garden room, orchard + well, rose parterre, vineyard trellis
+- Night lantern ring on walls/towers; path posts; gate banners
+
+Coverage target unchanged: ~104 lattice stations, uncovered farmland = 0.
