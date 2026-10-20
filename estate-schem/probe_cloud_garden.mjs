@@ -7,12 +7,14 @@ const SCHEM = new URL('../krutz-solar-house.schem', import.meta.url).pathname;
 const grid = await parseToGrid(SCHEM);
 const { width: SX, height: SY, length: SZ } = grid;
 
+const ORIGIN_X = 634;
 const ORIGIN_Y = 44;
-const toLX = (X) => X + 630;
-const toLY = (Y) => Y - 44;
-const toLZ = (Z) => Z - 352;
-const wx = (lx) => lx - 630;
-const wz = (lz) => lz + 352;
+const ORIGIN_Z = 348;
+const toLX = (X) => X + ORIGIN_X;
+const toLY = (Y) => Y - ORIGIN_Y;
+const toLZ = (Z) => Z - ORIGIN_Z;
+const wx = (lx) => lx - ORIGIN_X;
+const wz = (lz) => lz + ORIGIN_Z;
 
 const WALL_X1 = -590, WALL_X2 = -528, WALL_Z1 = 368, WALL_Z2 = 474;
 const HOUSE = (X, Z) => X <= -592 && Z >= 410 && Z <= 430;

@@ -8,8 +8,8 @@ Keep styling `krutz-solar-house.schem` so the English stone-walled acre in front
 
 ## Mapping
 
-- Schematic: `krutz-solar-house.schem` (118×41×139, expanded depth+height)
-- World → local: `localX = worldX + 630`, `localY = worldY - 44`, `localZ = worldZ - 352` (ORIGIN_Y shifted after underground expand)
+- Schematic: `krutz-solar-house.schem` (122×44×143, expanded W/H/N)
+- World → local: `localX = worldX + 634`, `localY = worldY - 44`, `localZ = worldZ - 348` (ORIGIN_X/Z shifted after west+north expand)
 - House (do not destroy): `wx <= -592`, `wz 410–430`, roof panels/stations at y≈77, water at x=-620..-618
 - Solar hill (do not flatten): `wx >= -526`, `wz 446–464`
 - Garden walls: x=-590 / x=-528 / z=368 / z=474; east gate z=420–421
@@ -71,7 +71,7 @@ Camera: `globalThis.__view = { camera, controls }` after the viewer loads.
 
 ## Ambition build (this session)
 
-Schematic expanded to **118×41×139** (`localY = worldY - 44`).
+Schematic expanded to **122×44×143** (`localX = worldX + 634`, `localY = worldY - 44`, `localZ = worldZ - 348`).
 
 Memorable features shipped:
 - Central fountain court on the main path (~-560,420) with sea-lantern basin glow
@@ -85,5 +85,8 @@ Memorable features shipped:
 - Herb spiral near house, sundial garden, NW lookout tower
 - Buried pantry/sorting stub under east approach
 - Softened NW/W exterior skirts
+- Waterfall cascade + base pool; rose garden room; oak pergola walk
+- Bee apiary; meditation pavilion; carriage stables stub
+- Glass cutaway deep-farm window (north) + night path sea-lantern glow
 
 Coverage target unchanged: ~104 lattice stations, uncovered farmland = 0.
