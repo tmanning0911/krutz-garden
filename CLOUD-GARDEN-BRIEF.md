@@ -10,7 +10,7 @@ Keep styling `krutz-solar-house.schem` so the English stone-walled acre in front
 
 - Schematic: `krutz-solar-house.schem` (122×44×143, expanded W/H/N)
 - World → local: `localX = worldX + 634`, `localY = worldY - 44`, `localZ = worldZ - 348` (ORIGIN_X/Z shifted after west+north expand)
-- House (do not destroy): `wx <= -592`, `wz 410–430`, roof panels/stations at y≈77, water at x=-620..-618
+- House (rebuilt on the west pad): footprint `x=-615..-596`, `z=413..427`, floor y=64, east door at z=420. Do not move the west water channel `x=-620..-618`, `z=410–430`, and do not move the drone lattice east of the garden wall.
 - Solar hill (do not flatten): `wx >= -526`, `wz 446–464`
 - Garden walls: x=-590 / x=-528 / z=368 / z=474; east gate z=420–421
 - Soil: x<-566 → 64; x<-552 → 66; x<-538 → 68; else 70
@@ -95,5 +95,6 @@ Memorable features shipped:
 - Berry cage in the potato beds, three composters on the west lawn, east-skirt flower mounds
 - West lawn lifted onto the y=64 terrace; channel banks eased; path verges swapped from oak-slab clutter to occasional benches
 - Crop rows broken with flowers. Cold frames sit near (-551, 68, 447) and (-546, 68, 449). Uncovered farmland stays 0.
+- Main house rebuilt (`estate-schem/rebuild_main_house.mjs`): spruce walls, stripped-oak corners, dark oak floor, deepslate roof, oak stair to the upper room. Energized Power (elite batteries, battery box, copper cable, powered lamp, tier-4 panel) is a separate run from Ala Industrial (insulated cable plus radiant, moonlit, and daylight panels, with air above the panels). The east wing has Hydrofarm beds, item pipes, liquid pipes, a tank, and a siphon, plus Agritech planters. Macaw blackstone windows are set back in the walls and a Macaw Japanese door faces the garden. The two old roof drone stations on this pad were removed; the 104-station lattice is unchanged.
 
 Coverage target unchanged: ~104 lattice stations, uncovered farmland = 0.
