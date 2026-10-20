@@ -8,7 +8,7 @@ Keep styling `krutz-solar-house.schem` so the English stone-walled acre in front
 
 ## Mapping
 
-- Schematic: `krutz-solar-house.schem` (128×47×143, expanded W/H/N + taller spires)
+- Schematic: `krutz-solar-house.schem` (128×47×143, expanded east + taller)
 - World → local: `localX = worldX + 634`, `localY = worldY - 44`, `localZ = worldZ - 348` (ORIGIN_X/Z shifted after west+north expand)
 - House (do not destroy): `wx <= -592`, `wz 410–430`, roof panels/stations at y≈77, water at x=-620..-618
 - Solar hill (do not flatten): `wx >= -526`, `wz 446–464`
@@ -109,4 +109,7 @@ Memorable features shipped:
 - Laundry yard; root cellar; bird bath; maze plinth; fountain rim lanterns
 - Rain garden swale; espalier apple; gatehouse bell; wall seat niches
 - Path cobble mix; wall ivy; house-front planters; solar apron
+- Palm court; iris rill; bee hotel wall; wall cressets; SE lighthouse; fairy rings; east nursery
+- Final exterior soften; path verges; gate welcome; solar panel polish
+
 Coverage target unchanged: ~104 lattice stations, uncovered farmland = 0.
