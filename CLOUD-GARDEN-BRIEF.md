@@ -8,7 +8,7 @@ Keep styling `krutz-solar-house.schem` so the English stone-walled acre in front
 
 ## Mapping
 
-- Schematic: `krutz-solar-house.schem` (122×47×143, expanded W/H/N + taller spires)
+- Schematic: `krutz-solar-house.schem` (128×47×143, expanded W/H/N + taller spires)
 - World → local: `localX = worldX + 634`, `localY = worldY - 44`, `localZ = worldZ - 348` (ORIGIN_X/Z shifted after west+north expand)
 - House (do not destroy): `wx <= -592`, `wz 410–430`, roof panels/stations at y≈77, water at x=-620..-618
 - Solar hill (do not flatten): `wx >= -526`, `wz 446–464`
@@ -71,7 +71,7 @@ Camera: `globalThis.__view = { camera, controls }` after the viewer loads.
 
 ## Ambition build (this session)
 
-Schematic expanded to **122×47×143** (`localX = worldX + 634`, `localY = worldY - 44`, `localZ = worldZ - 348`).
+Schematic expanded to **128×47×143** (`localX = worldX + 634`, `localY = worldY - 44`, `localZ = worldZ - 348`).
 
 Memorable features shipped:
 - Central fountain court on the main path (~-560,420) with sea-lantern basin glow
@@ -101,4 +101,7 @@ Memorable features shipped:
 - NW observatory cupola; koi bridge rails; tool shed; lavender ribbon; solar inverter cabinets
 - Secret pantry tunnel; west landing pier; crop mosaic; maple grove; clock tower
 
+
+- East orchard nursery + shed; candle labyrinth; boat house loft
+- Herb drying loft; SE lighthouse; fairy mushroom rings; fountain mosaic
 Coverage target unchanged: ~104 lattice stations, uncovered farmland = 0.
