@@ -98,5 +98,7 @@ Memorable features shipped:
 - Zen gravel court; hop trellis; camp kitchen; map gazebo; moss steps
 - Statue court; reed marsh; drying racks; drain swales; toll booth
 - Wine cellar; topiary; millstone ruin; wildflower N strip; battery vents
+- NW observatory cupola; koi bridge rails; tool shed; lavender ribbon; solar inverter cabinets
+- Secret pantry tunnel; west landing pier; crop mosaic; maple grove; clock tower
 
 Coverage target unchanged: ~104 lattice stations, uncovered farmland = 0.
