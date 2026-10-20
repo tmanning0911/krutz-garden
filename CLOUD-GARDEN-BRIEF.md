@@ -88,5 +88,8 @@ Memorable features shipped:
 - Waterfall cascade + base pool; rose garden room; oak pergola walk
 - Bee apiary; meditation pavilion; carriage stables stub
 - Glass cutaway deep-farm window (north) + night path sea-lantern glow
+- Healed floating exterior skirts; moon gate; firefly glade; SE amphitheatre
+- Expanded greenhouse; fountain end-rod jet; wall-walk parapet
+- Zen stepping stones; icehouse cellar; lantern festival posts; NE chapel ruin
 
 Coverage target unchanged: ~104 lattice stations, uncovered farmland = 0.
