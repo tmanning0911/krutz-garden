@@ -95,11 +95,11 @@ for (let x = 0; x < SX; x++)
       if (!ok) uncovered++;
     }
 
-// cliff probe: |ΔY| >= 2 between adjacent outside-wall cells
+// cliff probe: |ΔY| >= 2 between adjacent OUTSIDE cells only (ignore wall tops)
+const isOutside = (X, Z) => X < WALL_X1 || X > WALL_X2 || Z < WALL_Z1 || Z > WALL_Z2;
 for (let X = WALL_X1 - 1; X <= WALL_X2 + 14; X++) {
   for (let Z = WALL_Z1 - 14; Z <= WALL_Z2 + 2; Z++) {
-    const outside = X < WALL_X1 || X > WALL_X2 || Z < WALL_Z1 || Z > WALL_Z2;
-    if (!outside) continue;
+    if (!isOutside(X, Z)) continue;
     if (HOUSE(X, Z) || SOLAR(X, Z) || !inSchem(X, 64, Z)) continue;
     const y0 = topTerrainY(X, Z);
     if (y0 == null) continue;
@@ -108,6 +108,7 @@ for (let X = WALL_X1 - 1; X <= WALL_X2 + 14; X++) {
       [0, 1],
     ]) {
       const X2 = X + dx, Z2 = Z + dz;
+      if (!isOutside(X2, Z2)) continue;
       if (!inSchem(X2, 64, Z2) || HOUSE(X2, Z2) || SOLAR(X2, Z2)) continue;
       const y1 = topTerrainY(X2, Z2);
       if (y1 == null) continue;
