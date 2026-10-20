@@ -1,7 +1,7 @@
 /**
- * Pass 25 — observatory cupola on NW lookout, koi bridge rail upgrade,
- * compost yard, tool shed by stables, lavender ribbon, solar inverter
- * cabinets, final station/trapdoor sync. Mapping +634/-44/-348.
+ * Pass 25 — laundry yard, drying posts, root cellar hatch, bird bath,
+ * maze center upgrade, fountain rim lanterns, exterior soften again.
+ * Mapping: +634/-44/-348.
  */
 import { parseToGrid } from './node_modules/craftmatic/dist/schem/parse.js';
 import { writeSchematic } from './node_modules/craftmatic/dist/schem/write.js';
@@ -23,15 +23,18 @@ const WALL_X1 = -590,
   WALL_Z2 = 474;
 const HOUSE = (X, Z) => X <= -592 && Z >= 410 && Z <= 430;
 const SOLAR = (X, Z) => X >= -526 && Z >= 446 && Z <= 464;
+const WEST_WATER = (X, Z) => X >= -622 && X <= -618 && Z >= 408 && Z <= 432;
 const STATION = 'alaindustrial:garden_drone_station';
 const LATTICE_X = [-584, -575, -567, -561, -553, -547, -539, -533];
 const LATTICE_Z = [374, 383, 392, 401, 410, 415, 424, 429, 435, 444, 453, 462, 471];
 const FLOWERS = [
-  'minecraft:allium',
-  'minecraft:lilac',
-  'minecraft:azure_bluet',
   'minecraft:oxeye_daisy',
+  'minecraft:dandelion',
+  'minecraft:poppy',
+  'minecraft:allium',
   'minecraft:cornflower',
+  'minecraft:lily_of_the_valley',
+  'minecraft:azure_bluet',
 ];
 
 const full = (b) => (typeof b === 'string' ? b : String(b ?? 'minecraft:air'));
@@ -42,10 +45,6 @@ const setW = (X, Y, Z, b) => {
   grid.set(toLX(X), toLY(Y), toLZ(Z), b);
 };
 const setWForce = (X, Y, Z, b) => {
-  if (!inSchem(X, Y, Z)) return;
-  grid.set(toLX(X), toLY(Y), toLZ(Z), b);
-};
-const setSolar = (X, Y, Z, b) => {
   if (!inSchem(X, Y, Z)) return;
   grid.set(toLX(X), toLY(Y), toLZ(Z), b);
 };
@@ -63,11 +62,14 @@ const hash = (x, z) => {
 const soilY = (X) => (X < -566 ? 64 : X < -552 ? 66 : X < -538 ? 68 : 70);
 const isStationCell = (X, Z) => LATTICE_X.includes(X) && LATTICE_Z.includes(Z);
 const isTerrain = (n) =>
-  /grass_block|dirt$|stone$|granite|diorite|andesite|gravel|sand$|cobblestone$|farmland/.test(n);
-const isSoft = (n) =>
-  /short_grass|tall_grass|dandelion|poppy|allium|cornflower|oxeye|lily_of|azure|azalea|bush|leaf_litter|firefly|fern|wheat|carrot|potato|beet|petal|tulip|lilac/.test(
+  /grass_block|dirt$|stone$|granite|diorite|andesite|gravel|sand$|cobblestone$|farmland|coarse_dirt|moss_block|path|polished_andesite|smooth_stone/.test(
     n,
   );
+const isSoft = (n) =>
+  /short_grass|tall_grass|dandelion|poppy|allium|cornflower|oxeye|lily_of|azure|azalea|bush|leaf_litter|firefly|fern|wheat|carrot|potato|beet|petal|tulip|orchid|lilac|vine|berry/.test(
+    n,
+  );
+const isOutside = (X, Z) => X < WALL_X1 || X > WALL_X2 || Z < WALL_Z1 || Z > WALL_Z2;
 const brickMix = (X, Y, Z) => {
   const m = (X + Y * 3 + Z * 7) % 5;
   if (m === 0) return 'minecraft:mossy_stone_bricks';
@@ -76,12 +78,22 @@ const brickMix = (X, Y, Z) => {
   return 'minecraft:stone_bricks';
 };
 
+function topTerrainY(X, Z) {
+  for (let Y = 90; Y >= 45; Y--) {
+    if (!inSchem(X, Y, Z)) continue;
+    const n = getW(X, Y, Z);
+    if (isTerrain(n) || n.includes('dirt_path') || /stone_brick|mossy|cracked|cobble|hay|andesite|smooth_stone/.test(n))
+      return Y;
+  }
+  return null;
+}
+
 function clearSoft(X, Y, Z, h = 5) {
   for (let y = Y + 1; y <= Y + h; y++) {
     if (!inSchem(X, y, Z)) continue;
     const n = getW(X, y, Z);
     if (n.startsWith(STATION) || n.includes('trapdoor')) continue;
-    if (/fence|door|gate|wall|pane|plank|log|stair|slab|brick|lantern|glass|panel|battery|sign|banner/.test(n))
+    if (/fence|door|gate|wall|pane|plank|log|stair|slab|brick|lantern|glass|panel|battery|sign|banner|composter|barrel|hay|lectern|rail|wool|end_rod|pumpkin|bee|cauldron|decorated_pot|campfire|bed|chest/.test(n))
       break;
     if (isSoft(n) || n === 'minecraft:air' || isTerrain(n) || /leaves|crop|wheat|carrot|potato|beet/.test(n))
       setW(X, y, Z, 'minecraft:air');
@@ -90,8 +102,8 @@ function clearSoft(X, Y, Z, h = 5) {
 }
 
 function placeGrass(X, Y, Z, plant = true) {
-  if (!inSchem(X, Y, Z) || HOUSE(X, Z)) return;
-  for (let y = Math.max(ORIGIN_Y + 1, Y - 3); y < Y; y++) {
+  if (!inSchem(X, Y, Z) || HOUSE(X, Z) || WEST_WATER(X, Z)) return;
+  for (let y = Math.max(ORIGIN_Y + 1, Y - 4); y < Y; y++) {
     if (!inSchem(X, y, Z)) continue;
     const n = getW(X, y, Z);
     if (n === 'minecraft:air' || isSoft(n) || isTerrain(n)) setW(X, y, Z, 'minecraft:dirt');
@@ -101,126 +113,157 @@ function placeGrass(X, Y, Z, plant = true) {
   if (!plant) return;
   const r = hash(X, Z) % 100;
   if (r < 40) setW(X, Y + 1, Z, 'minecraft:short_grass');
-  else if (r < 60) {
-    const f = FLOWERS[hash(X, Z) % FLOWERS.length];
-    setW(X, Y + 1, Z, f);
-    if (f === 'minecraft:lilac') setW(X, Y + 2, Z, 'minecraft:lilac');
+  else if (r < 58) setW(X, Y + 1, Z, FLOWERS[hash(X, Z) % FLOWERS.length]);
+}
+
+function softenExterior() {
+  for (let pass = 0; pass < 6; pass++) {
+    const edits = [];
+    for (let X = -633; X <= -512; X++) {
+      for (let Z = 348; Z <= 490; Z++) {
+        if (!isOutside(X, Z) || HOUSE(X, Z) || SOLAR(X, Z) || WEST_WATER(X, Z) || !inSchem(X, 56, Z)) continue;
+        const y0 = topTerrainY(X, Z);
+        if (y0 == null) continue;
+        let minN = y0;
+        for (const [dx, dz] of [
+          [1, 0],
+          [-1, 0],
+          [0, 1],
+          [0, -1],
+        ]) {
+          const X2 = X + dx,
+            Z2 = Z + dz;
+          if (!isOutside(X2, Z2) || !inSchem(X2, 56, Z2) || HOUSE(X2, Z2) || WEST_WATER(X2, Z2)) continue;
+          const y1 = topTerrainY(X2, Z2);
+          if (y1 != null) minN = Math.min(minN, y1);
+        }
+        if (y0 > minN + 1) edits.push([X, Z, minN + 1]);
+      }
+    }
+    for (const [X, Z, t] of edits) {
+      for (let y = 90; y > t; y--) {
+        if (!inSchem(X, y, Z)) continue;
+        const n = getW(X, y, Z);
+        if (n.startsWith(STATION) || /trapdoor|brick|plank|log|fence|lantern|glass|panel|wool|rail|hay|pumpkin|lectern|barrel|bee|cauldron|bed|chest|campfire|decorated/.test(n))
+          continue;
+        if (isTerrain(n) || isSoft(n) || n === 'minecraft:air' || /leaves|vine/.test(n)) setW(X, y, Z, 'minecraft:air');
+      }
+      for (let y = ORIGIN_Y + 1; y < t; y++) {
+        const n = getW(X, y, Z);
+        if (n === 'minecraft:air' || isSoft(n)) setW(X, y, Z, 'minecraft:dirt');
+      }
+      placeGrass(X, t, Z, true);
+    }
+    if (!edits.length) break;
+  }
+  for (let X = -622; X <= -618; X++) {
+    for (let Z = 408; Z <= 432; Z++) {
+      if (HOUSE(X, Z) || !inSchem(X, 60, Z)) continue;
+      for (let y = ORIGIN_Y + 1; y <= 59; y++) setW(X, y, Z, 'minecraft:dirt');
+      setW(X, 60, Z, 'minecraft:dirt');
+      setW(X, 61, Z, 'minecraft:water');
+      setW(X, 62, Z, 'minecraft:water');
+      setW(X, 63, Z, hash(X, Z) % 8 === 0 ? 'minecraft:lily_pad' : 'minecraft:air');
+    }
   }
 }
 
-function observatoryCupola() {
-  const CX = WALL_X1 + 1,
-    CZ = WALL_Z1 + 1;
-  const base = soilY(CX) + 9;
+function laundryYard() {
+  for (let X = -586; X <= -580; X++) {
+    for (let Z = 434; Z <= 438; Z++) {
+      if (HOUSE(X, Z) || isStationCell(X, Z) || !inSchem(X, 64, Z)) continue;
+      const Y = soilY(X);
+      clearSoft(X, Y, Z, 3);
+      setW(X, Y, Z, 'minecraft:dirt_path');
+    }
+  }
+  // drying posts + wool "laundry"
+  for (const X of [-585, -583, -581]) {
+    const Z = 436,
+      Y = soilY(X);
+    setW(X, Y + 1, Z, 'minecraft:oak_fence');
+    setW(X, Y + 2, Z, 'minecraft:oak_fence');
+    setW(X, Y + 3, Z, 'minecraft:white_wool');
+  }
+  setW(-583, soilY(-583) + 1, 434, 'minecraft:cauldron[level=2]');
+}
+
+function rootCellar() {
+  const CX = -570,
+    CZ = 410,
+    floor = 56;
+  if (!inSchem(CX, floor, CZ) || isStationCell(CX, CZ)) return;
+  for (let dx = -2; dx <= 2; dx++) {
+    for (let dz = -2; dz <= 2; dz++) {
+      for (let dy = 0; dy <= 3; dy++) {
+        const X = CX + dx,
+          Y = floor + dy,
+          Z = CZ + dz;
+        if (!inSchem(X, Y, Z) || isStationCell(X, Z)) continue;
+        const edge = Math.abs(dx) === 2 || Math.abs(dz) === 2 || dy === 0 || dy === 3;
+        if (edge) setW(X, Y, Z, brickMix(X, Y, Z));
+        else {
+          setW(X, Y, Z, 'minecraft:air');
+          if (dy === 1 && (dx + dz) % 2 === 0) setW(X, Y, Z, 'minecraft:barrel[facing=up,open=false]');
+        }
+      }
+    }
+  }
+  setW(CX, soilY(CX), CZ, 'minecraft:spruce_trapdoor[facing=south,half=top,open=false,waterlogged=false]');
+  setW(CX, floor + 2, CZ, 'minecraft:lantern[hanging=true]');
+}
+
+function birdBath() {
+  const CX = -556,
+    CZ = 428,
+    Y = soilY(CX);
+  if (isStationCell(CX, CZ) || !inSchem(CX, Y, CZ)) return;
+  for (const [dx, dz] of [
+    [-1, 0],
+    [1, 0],
+    [0, -1],
+    [0, 1],
+  ]) {
+    setW(CX + dx, Y, CZ + dz, brickMix(CX + dx, Y, CZ + dz));
+    clearSoft(CX + dx, Y, CZ + dz, 2);
+  }
+  setW(CX, Y, CZ, 'minecraft:water');
+  setW(CX, Y + 1, CZ, 'minecraft:air');
+  setW(CX, Y - 1, CZ, 'minecraft:stone_bricks');
+}
+
+function mazeCenterUpgrade() {
+  // plinth upgrade near maze center ~(-571,385)
+  const CX = -571,
+    CZ = 385,
+    Y = soilY(CX);
+  if (!inSchem(CX, Y, CZ)) return;
   for (let dx = -1; dx <= 1; dx++) {
     for (let dz = -1; dz <= 1; dz++) {
-      const X = CX + dx,
-        Z = CZ + dz;
-      if (!inSchem(X, base, Z)) continue;
-      setW(X, base, Z, 'minecraft:stone_brick_slab[type=bottom]');
-      if (dx === 0 && dz === 0) {
-        setW(X, base + 1, Z, 'minecraft:glass');
-        setW(X, base + 2, Z, 'minecraft:glass');
-        setW(X, base + 3, Z, 'minecraft:daylight_detector[inverted=false,power=0]');
-        setW(X, base + 4, Z, 'minecraft:end_rod[facing=up]');
-      } else {
-        setW(X, base + 1, Z, brickMix(X, base + 1, Z));
-      }
+      if (isStationCell(CX + dx, CZ + dz)) continue;
+      setW(CX + dx, Y, CZ + dz, 'minecraft:polished_andesite');
+      clearSoft(CX + dx, Y, CZ + dz, 3);
     }
   }
+  setW(CX, Y + 1, CZ, 'minecraft:chiseled_stone_bricks');
+  setW(CX, Y + 2, CZ, 'minecraft:lantern[hanging=false]');
+  setW(CX, Y + 3, CZ, 'minecraft:flower_pot');
 }
 
-function koiBridgeRails() {
-  // upgrade reflecting pool bridge rails
-  const CZ = 434,
-    Y = soilY(-548);
-  for (let X = -551; X <= -545; X++) {
-    if (isStationCell(X, CZ)) continue;
-    setW(X, Y, CZ, 'minecraft:spruce_planks');
-    if (X === -548) {
-      setW(X, Y + 1, CZ, 'minecraft:lantern[hanging=false]');
-    } else {
-      setW(X, Y + 1, CZ - 1, 'minecraft:spruce_fence');
-      setW(X, Y + 1, CZ + 1, 'minecraft:spruce_fence');
-    }
-  }
-}
-
-function compostYard() {
-  const x0 = -586,
-    z0 = 436;
-  const Y = 64;
-  for (let X = x0; X <= x0 + 3; X++) {
-    for (let Z = z0; Z <= z0 + 3; Z++) {
-      if (isStationCell(X, Z) || HOUSE(X, Z) || !inSchem(X, Y, Z)) continue;
-      clearSoft(X, Y, Z, 3);
-      const edge = X === x0 || X === x0 + 3 || Z === z0 || Z === z0 + 3;
-      setW(X, Y, Z, edge ? 'minecraft:cobblestone' : 'minecraft:dirt');
-      if (!edge) setW(X, Y + 1, Z, 'minecraft:composter[level=5]');
-      else if ((X + Z) % 2 === 0) setW(X, Y + 1, Z, 'minecraft:oak_fence');
-    }
-  }
-  setW(x0 + 1, Y + 1, z0 + 1, 'minecraft:barrel[facing=up,open=false]');
-  setW(x0 + 2, Y + 2, z0, 'minecraft:lantern[hanging=false]');
-}
-
-function toolShed() {
-  const x0 = -590,
-    x1 = -586,
-    z0 = 438,
-    z1 = 442;
-  const Y = 64;
-  for (let X = x0; X <= x1; X++) {
-    for (let Z = z0; Z <= z1; Z++) {
-      if (HOUSE(X, Z) || isStationCell(X, Z) || !inSchem(X, Y, Z)) continue;
-      clearSoft(X, Y, Z, 5);
-      const edge = X === x0 || X === x1 || Z === z0 || Z === z1;
-      const door = Z === z0 && X === -588;
-      setW(X, Y, Z, 'minecraft:cobblestone');
-      if (edge && !door) {
-        for (let y = Y + 1; y <= Y + 3; y++) setW(X, y, Z, 'minecraft:spruce_planks');
-      } else if (!edge) {
-        setW(X, Y + 1, Z, 'minecraft:air');
-        setW(X, Y + 2, Z, 'minecraft:air');
-        setW(X, Y + 3, Z, 'minecraft:air');
-      }
-      setW(X, Y + 4, Z, 'minecraft:spruce_slab[type=bottom]');
-    }
-  }
-  setW(-588, Y + 1, z0, 'minecraft:spruce_door[facing=north,half=lower,hinge=left,open=false,powered=false]');
-  setW(-588, Y + 2, z0, 'minecraft:spruce_door[facing=north,half=upper,hinge=left,open=false,powered=false]');
-  setW(-587, Y + 1, 440, 'minecraft:crafting_table');
-  setW(-589, Y + 1, 440, 'minecraft:chest[facing=east,type=single,waterlogged=false]');
-  setW(-588, Y + 3, 440, 'minecraft:lantern[hanging=true]');
-}
-
-function lavenderRibbon() {
-  for (let X = -580; X <= -536; X++) {
-    for (const Z of [376, 472]) {
-      if (isStationCell(X, Z) || SOLAR(X, Z) || !inSchem(X, soilY(X), Z)) continue;
-      if (getW(X, soilY(X) + 1, Z).startsWith(STATION)) continue;
-      const Y = soilY(X);
-      placeGrass(X, Y, Z, false);
-      setW(X, Y + 1, Z, hash(X, Z) % 2 ? 'minecraft:allium' : 'minecraft:lilac');
-      if (getW(X, Y + 1, Z) === 'minecraft:lilac') setW(X, Y + 2, Z, 'minecraft:lilac');
-    }
-  }
-}
-
-function solarInverterCabinets() {
-  // surface cabinets near lightning rod
+function fountainRimLights() {
   for (const [X, Z] of [
-    [-521, 454],
-    [-519, 454],
-    [-521, 456],
-    [-519, 456],
+    [-562, 418],
+    [-558, 418],
+    [-562, 422],
+    [-558, 422],
+    [-560, 417],
+    [-560, 423],
   ]) {
-    if (!inSchem(X, 71, Z)) continue;
-    setSolar(X, 71, Z, 'minecraft:iron_block');
-    setSolar(X, 72, Z, 'alaindustrial:battery_box');
+    if (isStationCell(X, Z) || !inSchem(X, 66, Z)) continue;
+    const Y = soilY(X);
+    setW(X, Y + 1, Z, 'minecraft:spruce_fence');
+    setW(X, Y + 2, Z, 'minecraft:lantern[hanging=false]');
   }
-  setSolar(-520, 72, 454, 'minecraft:redstone_lamp[lit=true]');
-  setSolar(-520, 71, 453, 'minecraft:lever[face=wall,facing=north,powered=true]');
 }
 
 function ensureStations() {
@@ -238,33 +281,6 @@ function ensureStations() {
       );
     }
   }
-  // deep farm station
-  if (inSchem(-554, 52, 365)) {
-    setWForce(-554, 51, 365, 'minecraft:grass_block');
-    setWForce(-554, 52, 365, STATION);
-    setWForce(
-      -554,
-      53,
-      365,
-      'minecraft:spruce_trapdoor[facing=south,half=bottom,open=true,waterlogged=false]',
-    );
-  }
-}
-
-function restoreTrapdoors() {
-  for (let x = 0; x < SX; x++)
-    for (let y = 0; y < SY; y++)
-      for (let z = 0; z < SZ; z++) {
-        if (!full(grid.get(x, y, z)).startsWith(STATION)) continue;
-        if (!full(grid.get(x, y + 1, z)).includes('trapdoor')) {
-          grid.set(
-            x,
-            y + 1,
-            z,
-            'minecraft:spruce_trapdoor[facing=south,half=bottom,open=true,waterlogged=false]',
-          );
-        }
-      }
 }
 
 function coverage() {
@@ -278,14 +294,15 @@ function coverage() {
     farm = 0,
     trapOk = 0,
     panels = 0,
-    lanterns = 0;
+    cliffs = 0,
+    water = 0;
   for (const [x, y, z] of stations) if (full(grid.get(x, y + 1, z)).includes('trapdoor')) trapOk++;
   for (let x = 0; x < SX; x++)
     for (let y = 0; y < SY; y++)
       for (let z = 0; z < SZ; z++) {
         const n = full(grid.get(x, y, z));
         if (n.includes('solar_panel')) panels++;
-        if (n.includes('lantern')) lanterns++;
+        if (n.includes('water') && wx(x) >= -622 && wx(x) <= -618 && wz(z) >= 408 && wz(z) <= 432) water++;
         if (!n.startsWith('minecraft:farmland')) continue;
         farm++;
         let ok = false;
@@ -301,8 +318,7 @@ function coverage() {
           if (!HOUSE(X, Z)) {
             grid.set(x, y, z, 'minecraft:grass_block');
             const a = full(grid.get(x, y + 1, z));
-            if (/wheat|carrot|potato|beet|grass|flower|poppy|lilac/.test(a))
-              grid.set(x, y + 1, z, 'minecraft:short_grass');
+            if (/wheat|carrot|potato|beet|grass|flower/.test(a)) grid.set(x, y + 1, z, 'minecraft:short_grass');
           }
         }
       }
@@ -322,28 +338,45 @@ function coverage() {
         }
         if (!ok) uncovered++;
       }
+  for (let X = WALL_X1 - 1; X <= WALL_X2 + 14; X++) {
+    for (let Z = WALL_Z1 - 14; Z <= WALL_Z2 + 2; Z++) {
+      if (!isOutside(X, Z) || HOUSE(X, Z) || SOLAR(X, Z) || !inSchem(X, 64, Z)) continue;
+      const y0 = topTerrainY(X, Z);
+      if (y0 == null) continue;
+      for (const [dx, dz] of [
+        [1, 0],
+        [0, 1],
+      ]) {
+        const X2 = X + dx,
+          Z2 = Z + dz;
+        if (!isOutside(X2, Z2) || !inSchem(X2, 64, Z2) || HOUSE(X2, Z2) || SOLAR(X2, Z2)) continue;
+        const y1 = topTerrainY(X2, Z2);
+        if (y1 != null && Math.abs(y0 - y1) >= 2) cliffs++;
+      }
+    }
+  }
   return {
     size: { SX, SY, SZ },
-    mapping: 'localX=wx+634, localY=wy-44, localZ=wz-348',
+    mapping: `localX=wx+${ORIGIN_X}, localY=wy-${ORIGIN_Y}, localZ=wz-${ORIGIN_Z}`,
     stations: stations.length,
     lattice: stations.filter(([x, , z]) => LATTICE_X.includes(wx(x)) && LATTICE_Z.includes(wz(z))).length,
     trapOk,
     farm,
     uncovered,
     panels,
-    lanterns,
+    exteriorCliffs: cliffs,
+    westWaterBlocks: water,
   };
 }
 
 console.log('pass25…');
-observatoryCupola();
-koiBridgeRails();
-compostYard();
-toolShed();
-lavenderRibbon();
-solarInverterCabinets();
+softenExterior();
+laundryYard();
+rootCellar();
+birdBath();
+mazeCenterUpgrade();
+fountainRimLights();
 ensureStations();
-restoreTrapdoors();
 const m = coverage();
 writeSchematic(grid, SCHEM, 3700);
 console.log(JSON.stringify(m, null, 2));
