@@ -93,3 +93,16 @@ Memorable features shipped:
 - Zen stepping stones; icehouse cellar; lantern festival posts; NE chapel ruin
 
 Coverage target unchanged: ~104 lattice stations, uncovered farmland = 0.
+
+## Session notes (cloud polish 19–23)
+
+Shipped on `krutz-solar-house.schem` (still 122×44×143, mapping +634/−44/−348):
+
+- West lawn graded to y=64 terrace + dirt-path approach to house steps
+- Floating stone overhangs west of wall cleared; exterior soft tops step-smoothed
+- N/E/S skirts softened; lavender walk; clock-tower stub; dovecote; millstone plaza
+- Path posts/benches; kitchen herb beds; orchard swing; gate urns; SE rock garden
+- Fountain topiary; rain cistern; greenhouse planters; wall-foot flower ribbon
+- Berry patch; hitching posts; crop micro-breaks; marker wool removed
+
+Probe: lattice 104 + trapdoors, **uncovered farmland = 0**. Viewer shots via `estate-schem/screenshot_views.mjs`.

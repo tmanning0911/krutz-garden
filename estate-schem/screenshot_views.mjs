@@ -37,9 +37,9 @@ const views = [
   },
   {
     name: 'house-front',
-    // from garden looking west at house doors
-    cam: toMesh(-575, 78, 420),
-    target: toMesh(-598, 70, 420),
+    // on west lawn between wall and house, looking at facade
+    cam: toMesh(-588, 76, 420),
+    target: toMesh(-605, 72, 420),
   },
 ];
 
