@@ -8,7 +8,7 @@ Keep styling `krutz-solar-house.schem` so the English stone-walled acre in front
 
 ## Mapping
 
-- Schematic: `krutz-solar-house.schem` (122×44×143, expanded W/H/N)
+- Schematic: `krutz-solar-house.schem` (122×47×143, expanded W/H/N + taller spires)
 - World → local: `localX = worldX + 634`, `localY = worldY - 44`, `localZ = worldZ - 348` (ORIGIN_X/Z shifted after west+north expand)
 - House (do not destroy): `wx <= -592`, `wz 410–430`, roof panels/stations at y≈77, water at x=-620..-618
 - Solar hill (do not flatten): `wx >= -526`, `wz 446–464`
