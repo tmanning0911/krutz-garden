@@ -91,5 +91,9 @@ Memorable features shipped:
 - Healed floating exterior skirts; moon gate; firefly glade; SE amphitheatre
 - Expanded greenhouse; fountain end-rod jet; wall-walk parapet
 - Zen stepping stones; icehouse cellar; lantern festival posts; NE chapel ruin
+- North-slope summerhouse (spruce, barrel, hanging lantern) with a dirt path and fern edge up from the north wall
+- Berry cage in the potato beds, three composters on the west lawn, east-skirt flower mounds
+- West lawn lifted onto the y=64 terrace; channel banks eased; path verges swapped from oak-slab clutter to occasional benches
+- Crop rows broken with flowers. Cold frames sit near (-551, 68, 447) and (-546, 68, 449). Uncovered farmland stays 0.
 
 Coverage target unchanged: ~104 lattice stations, uncovered farmland = 0.
