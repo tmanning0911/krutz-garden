@@ -1,7 +1,7 @@
 /**
- * Pass 24 — shepherd hut, sheep paddock fence, camping fire circle,
- * memorial oak, east service gate, more crop breaks, west lawn polish.
- * Mapping: +634/-44/-348.
+ * Pass 24 — final polish: lantern festival ring densify, crop verge
+ * flowers, west lawn soft grade, north skirt wildflowers, station sync,
+ * coverage assert. Mapping: +634/-44/-348.
  */
 import { parseToGrid } from './node_modules/craftmatic/dist/schem/parse.js';
 import { writeSchematic } from './node_modules/craftmatic/dist/schem/write.js';
@@ -35,6 +35,7 @@ const FLOWERS = [
   'minecraft:cornflower',
   'minecraft:lily_of_the_valley',
   'minecraft:azure_bluet',
+  'minecraft:pink_tulip',
 ];
 
 const full = (b) => (typeof b === 'string' ? b : String(b ?? 'minecraft:air'));
@@ -66,7 +67,7 @@ const isTerrain = (n) =>
     n,
   );
 const isSoft = (n) =>
-  /short_grass|tall_grass|dandelion|poppy|allium|cornflower|oxeye|lily_of|azure|azalea|bush|leaf_litter|firefly|fern|wheat|carrot|potato|beet|petal|tulip|orchid|lilac|vine|berry/.test(
+  /short_grass|tall_grass|dandelion|poppy|allium|cornflower|oxeye|lily_of|azure|azalea|bush|leaf_litter|firefly|fern|wheat|carrot|potato|beet|petal|tulip|orchid|lilac|vine|berry|rail/.test(
     n,
   );
 const isOutside = (X, Z) => X < WALL_X1 || X > WALL_X2 || Z < WALL_Z1 || Z > WALL_Z2;
@@ -75,7 +76,7 @@ function topTerrainY(X, Z) {
   for (let Y = 90; Y >= 45; Y--) {
     if (!inSchem(X, Y, Z)) continue;
     const n = getW(X, Y, Z);
-    if (isTerrain(n) || n.includes('dirt_path') || /stone_brick|mossy|cracked|cobble|hay|andesite|smooth_stone/.test(n))
+    if (isTerrain(n) || n.includes('dirt_path') || /stone_brick|mossy|cracked|cobble|hay|andesite|smooth_stone|gravel|sand/.test(n))
       return Y;
   }
   return null;
@@ -86,7 +87,7 @@ function clearSoft(X, Y, Z, h = 5) {
     if (!inSchem(X, y, Z)) continue;
     const n = getW(X, y, Z);
     if (n.startsWith(STATION) || n.includes('trapdoor')) continue;
-    if (/fence|door|gate|wall|pane|plank|log|stair|slab|brick|lantern|glass|panel|battery|sign|banner|composter|barrel|hay|lectern|rail|wool|end_rod|pumpkin|bee|cauldron|decorated_pot|campfire/.test(n))
+    if (/fence|door|gate|wall|pane|plank|log|stair|slab|brick|lantern|glass|panel|battery|sign|banner|composter|barrel|hay|lectern|rail|wool|end_rod|pumpkin|bee|campfire|smoker|cartography|head|grindstone|copper|lightning/.test(n))
       break;
     if (isSoft(n) || n === 'minecraft:air' || isTerrain(n) || /leaves|crop|wheat|carrot|potato|beet/.test(n))
       setW(X, y, Z, 'minecraft:air');
@@ -109,132 +110,114 @@ function placeGrass(X, Y, Z, plant = true) {
   else if (r < 58) setW(X, Y + 1, Z, FLOWERS[hash(X, Z) % FLOWERS.length]);
 }
 
-function shepherdHut() {
-  const CX = -536,
-    CZ = 380,
-    Y = soilY(CX);
-  for (let dx = -2; dx <= 2; dx++) {
-    for (let dz = -2; dz <= 2; dz++) {
-      const X = CX + dx,
-        Z = CZ + dz;
-      if (isStationCell(X, Z) || !inSchem(X, Y, Z)) continue;
-      const edge = Math.abs(dx) === 2 || Math.abs(dz) === 2;
-      setW(X, Y, Z, 'minecraft:cobblestone');
-      clearSoft(X, Y, Z, 4);
-      if (edge && !(dx === 0 && dz === 2)) {
-        setW(X, Y + 1, Z, 'minecraft:cobblestone');
-        setW(X, Y + 2, Z, 'minecraft:spruce_stairs[facing=north,half=bottom]');
+function softenExterior() {
+  for (let pass = 0; pass < 6; pass++) {
+    const edits = [];
+    for (let X = -633; X <= -512; X++) {
+      for (let Z = 348; Z <= 490; Z++) {
+        if (!isOutside(X, Z) || HOUSE(X, Z) || SOLAR(X, Z) || WEST_WATER(X, Z) || !inSchem(X, 56, Z)) continue;
+        const y0 = topTerrainY(X, Z);
+        if (y0 == null) continue;
+        let minN = y0;
+        for (const [dx, dz] of [
+          [1, 0],
+          [-1, 0],
+          [0, 1],
+          [0, -1],
+        ]) {
+          const X2 = X + dx,
+            Z2 = Z + dz;
+          if (!isOutside(X2, Z2) || !inSchem(X2, 56, Z2) || HOUSE(X2, Z2) || WEST_WATER(X2, Z2)) continue;
+          const y1 = topTerrainY(X2, Z2);
+          if (y1 != null) minN = Math.min(minN, y1);
+        }
+        if (y0 > minN + 1) edits.push([X, Z, minN + 1]);
       }
     }
+    for (const [X, Z, t] of edits) {
+      for (let y = 90; y > t; y--) {
+        if (!inSchem(X, y, Z)) continue;
+        const n = getW(X, y, Z);
+        if (n.startsWith(STATION) || /trapdoor|brick|plank|log|fence|lantern|glass|panel|wool|rail|hay|pumpkin|lectern|barrel|bee|campfire|smoker|head|copper|lightning/.test(n))
+          continue;
+        if (isTerrain(n) || isSoft(n) || n === 'minecraft:air' || /leaves|vine/.test(n)) setW(X, y, Z, 'minecraft:air');
+      }
+      for (let y = ORIGIN_Y + 1; y < t; y++) {
+        const n = getW(X, y, Z);
+        if (n === 'minecraft:air' || isSoft(n)) setW(X, y, Z, 'minecraft:dirt');
+      }
+      placeGrass(X, t, Z, true);
+    }
+    if (!edits.length) break;
   }
-  setW(CX, Y + 1, CZ, 'minecraft:white_bed[facing=south,part=foot]');
-  setW(CX, Y + 1, CZ + 1, 'minecraft:white_bed[facing=south,part=head]');
-  setW(CX + 1, Y + 1, CZ, 'minecraft:crafting_table');
-  setW(CX - 1, Y + 1, CZ, 'minecraft:chest[facing=east]');
-  setW(CX, Y + 3, CZ, 'minecraft:lantern[hanging=true]');
+  for (let X = -622; X <= -618; X++) {
+    for (let Z = 408; Z <= 432; Z++) {
+      if (HOUSE(X, Z) || !inSchem(X, 60, Z)) continue;
+      for (let y = ORIGIN_Y + 1; y <= 59; y++) setW(X, y, Z, 'minecraft:dirt');
+      setW(X, 60, Z, 'minecraft:dirt');
+      setW(X, 61, Z, 'minecraft:water');
+      setW(X, 62, Z, 'minecraft:water');
+      setW(X, 63, Z, hash(X, Z) % 8 === 0 ? 'minecraft:lily_pad' : 'minecraft:air');
+    }
+  }
 }
 
-function sheepPaddock() {
-  for (let X = -542; X <= -530; X++) {
-    for (let Z = 374; Z <= 386; Z++) {
-      if (isStationCell(X, Z) || !inSchem(X, 64, Z)) continue;
+function densifyLanterns() {
+  for (let X = WALL_X1; X <= WALL_X2; X += 6) {
+    for (const Z of [WALL_Z1, WALL_Z2]) {
+      const Y = soilY(X) + 4;
+      if (!inSchem(X, Y, Z)) continue;
+      setW(X, Y, Z, 'minecraft:lantern[hanging=false]');
+    }
+  }
+  for (let Z = WALL_Z1 + 3; Z < WALL_Z2; Z += 6) {
+    for (const X of [WALL_X1, WALL_X2]) {
+      if (X === WALL_X2 && Z >= 418 && Z <= 423) continue;
+      const Y = soilY(X) + 4;
+      if (!inSchem(X, Y, Z)) continue;
+      setW(X, Y, Z, 'minecraft:lantern[hanging=false]');
+    }
+  }
+}
+
+function pathVerges() {
+  for (let X = -586; X <= -532; X++) {
+    for (const Z of [417, 424]) {
+      if (isStationCell(X, Z) || HOUSE(X, Z) || !inSchem(X, 64, Z)) continue;
       const Y = soilY(X);
-      const edge = X === -542 || X === -530 || Z === 374 || Z === 386;
-      if (edge) {
-        setW(X, Y + 1, Z, 'minecraft:oak_fence');
-        if ((X + Z) % 5 === 0) setW(X, Y + 2, Z, 'minecraft:lantern[hanging=false]');
-      } else if (hash(X, Z) % 4 === 0) {
-        placeGrass(X, Y, Z, true);
-      }
-    }
-  }
-  // gate
-  setW(-536, soilY(-536) + 1, 386, 'minecraft:oak_fence_gate[facing=south,open=false]');
-}
-
-function fireCircle() {
-  const CX = -564,
-    CZ = 460,
-    Y = soilY(CX);
-  for (let a = 0; a < 8; a++) {
-    const ang = (a / 8) * Math.PI * 2;
-    const X = Math.round(CX + Math.cos(ang) * 2);
-    const Z = Math.round(CZ + Math.sin(ang) * 2);
-    if (isStationCell(X, Z) || !inSchem(X, Y, Z)) continue;
-    setW(X, Y, Z, 'minecraft:cobblestone');
-    clearSoft(X, Y, Z, 2);
-    setW(X, Y + 1, Z, 'minecraft:spruce_stairs[facing=north,half=bottom]');
-  }
-  setW(CX, Y, CZ, 'minecraft:campfire[lit=true,facing=north]');
-  clearSoft(CX, Y, CZ, 2);
-}
-
-function memorialOak() {
-  const CX = -580,
-    CZ = 432,
-    Y = soilY(CX);
-  if (isStationCell(CX, CZ) || !inSchem(CX, Y, CZ)) return;
-  setW(CX, Y, CZ, 'minecraft:dirt');
-  for (let dy = 1; dy <= 5; dy++) setW(CX, Y + dy, CZ, 'minecraft:oak_log');
-  for (let dx = -2; dx <= 2; dx++) {
-    for (let dz = -2; dz <= 2; dz++) {
-      for (let dy = 4; dy <= 6; dy++) {
-        if (Math.abs(dx) + Math.abs(dz) + (dy - 5) > 3) continue;
-        const X = CX + dx,
-          Z = CZ + dz;
-        if (!inSchem(X, Y + dy, Z) || isStationCell(X, Z)) continue;
-        if (dx === 0 && dz === 0 && dy < 6) continue;
-        setW(X, Y + dy, Z, 'minecraft:oak_leaves[persistent=true]');
-      }
-    }
-  }
-  setW(CX + 1, Y + 1, CZ, 'minecraft:oak_sign[rotation=4,waterlogged=false]');
-  // ring of flowers
-  for (let dx = -3; dx <= 3; dx++) {
-    for (let dz = -3; dz <= 3; dz++) {
-      if (Math.abs(dx) + Math.abs(dz) !== 3) continue;
-      const X = CX + dx,
-        Z = CZ + dz;
-      if (isStationCell(X, Z) || HOUSE(X, Z)) continue;
+      if (getW(X, Y + 1, Z).startsWith(STATION)) continue;
+      if (hash(X, Z) % 2 !== 0) continue;
       placeGrass(X, Y, Z, false);
       setW(X, Y + 1, Z, FLOWERS[hash(X, Z) % FLOWERS.length]);
     }
   }
 }
 
-function eastServiceGate() {
-  for (const Z of [448, 449]) {
-    const X = -528;
-    if (!inSchem(X, 70, Z)) continue;
-    setW(X, 70, Z, 'minecraft:air');
-    setW(X, 71, Z, 'minecraft:air');
-    setW(X - 1, 70, Z, 'minecraft:dirt_path');
-    setW(X + 1, 70, Z, 'minecraft:dirt_path');
-  }
-  setW(-528, 70, 447, 'minecraft:oak_fence_gate[facing=east,open=false]');
-  setW(-528, 71, 447, 'minecraft:lantern[hanging=false]');
-  setW(-528, 70, 450, 'minecraft:oak_fence_gate[facing=east,open=false]');
-}
-
-function westLawnPolish() {
+function westLawn() {
   for (let Z = 412; Z <= 428; Z++) {
     for (let X = -591; X <= -587; X++) {
       if (HOUSE(X, Z) || WEST_WATER(X, Z) || !inSchem(X, 64, Z)) continue;
-      placeGrass(X, 64, Z, X < -589);
-      if (X >= -588 && hash(X, Z) % 4 === 0) setW(X, 65, Z, FLOWERS[hash(X, Z) % FLOWERS.length]);
+      const t = 64;
+      for (let y = ORIGIN_Y + 1; y < t; y++) {
+        const n = getW(X, y, Z);
+        if (n === 'minecraft:air' || isSoft(n)) setW(X, y, Z, 'minecraft:dirt');
+      }
+      placeGrass(X, t, Z, X < -589);
     }
   }
 }
 
-function cropBreaks() {
-  for (let X = WALL_X1 + 3; X < WALL_X2 - 3; X++) {
-    const Y = soilY(X);
-    for (let Z = WALL_Z1 + 5; Z < WALL_Z2 - 5; Z++) {
-      if (HOUSE(X, Z) || Z >= 418 && Z <= 423 || isStationCell(X, Z)) continue;
-      if (LATTICE_X.includes(X) && LATTICE_Z.some((sz) => Math.abs(sz - Z) <= 1)) continue;
-      if (!/wheat|carrot|potato|beet/.test(getW(X, Y + 1, Z))) continue;
-      if (hash(X * 7, Z * 3) % 41 !== 0) continue;
-      placeGrass(X, Y, Z, true);
+function northWildflowers() {
+  for (let X = WALL_X1; X <= WALL_X2; X++) {
+    for (let d = 1; d <= 8; d++) {
+      const Z = WALL_Z1 - d;
+      if (!inSchem(X, 58, Z) || HOUSE(X, Z)) continue;
+      const Y = topTerrainY(X, Z);
+      if (Y == null) continue;
+      if (hash(X, Z) % 3 === 0) {
+        placeGrass(X, Y, Z, false);
+        setW(X, Y + 1, Z, FLOWERS[hash(X, Z) % FLOWERS.length]);
+      }
     }
   }
 }
@@ -268,13 +251,15 @@ function coverage() {
     trapOk = 0,
     panels = 0,
     cliffs = 0,
-    water = 0;
+    water = 0,
+    lanterns = 0;
   for (const [x, y, z] of stations) if (full(grid.get(x, y + 1, z)).includes('trapdoor')) trapOk++;
   for (let x = 0; x < SX; x++)
     for (let y = 0; y < SY; y++)
       for (let z = 0; z < SZ; z++) {
         const n = full(grid.get(x, y, z));
         if (n.includes('solar_panel')) panels++;
+        if (n.includes('lantern')) lanterns++;
         if (n.includes('water') && wx(x) >= -622 && wx(x) <= -618 && wz(z) >= 408 && wz(z) <= 432) water++;
         if (!n.startsWith('minecraft:farmland')) continue;
         farm++;
@@ -337,19 +322,18 @@ function coverage() {
     farm,
     uncovered,
     panels,
+    lanterns,
     exteriorCliffs: cliffs,
     westWaterBlocks: water,
   };
 }
 
 console.log('pass24…');
-shepherdHut();
-sheepPaddock();
-fireCircle();
-memorialOak();
-eastServiceGate();
-westLawnPolish();
-cropBreaks();
+softenExterior();
+densifyLanterns();
+pathVerges();
+westLawn();
+northWildflowers();
 ensureStations();
 const m = coverage();
 writeSchematic(grid, SCHEM, 3700);
